@@ -123,7 +123,8 @@ A = jacobian(f,X);
 B = jacobian(f,Tau);
 
 disp(vec(A))
-disp(length(vec(A)))
+disp(unique(nonzeros(vec(A))))
+disp(length(unique(nonzeros(vec(A)))))
 
 % u01 = 0;
 % u02 = 0;

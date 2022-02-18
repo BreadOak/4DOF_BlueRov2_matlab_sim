@@ -1,2 +1,2 @@
-- PI controller
+- PD controller
 - LQR controller

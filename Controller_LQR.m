@@ -1,4 +1,4 @@
-function  [Input_trajectory, Output_trajectory] = Controller_LQR(Initial_eta, Desired_trajectory, s_time)
+function  [Input_trajectory, Output_trajectory] = Controller_LQR(Initial_Eta, Desired_trajectory, s_time)
     
     global Tf M C D g J
     
@@ -47,7 +47,7 @@ function  [Input_trajectory, Output_trajectory] = Controller_LQR(Initial_eta, De
 
     Output_trajectory = {};
     Input_trajectory = {};
-    Current_eta = [Initial_eta(1:3); Initial_eta(6); 0; 0; 0; 0];
+    Current_X = [Initial_Eta(1:3); Initial_Eta(6); 0; 0; 0; 0];
 
     t = 0;
     i = 0;
@@ -60,22 +60,22 @@ function  [Input_trajectory, Output_trajectory] = Controller_LQR(Initial_eta, De
         T = cell2mat( Desired_trajectory(i) );
         [R , p] = TransToRp(T);
         eul = rotm2eul(R).';
-        Desired_eta = [p; eul(3); 0; 0; 0; 0];
+        Desired_X = [p; eul(3); 0; 0; 0; 0];
 
         % Position & Orientation
-        x  = Current_eta(1);
-        y  = Current_eta(2);
-        z  = Current_eta(3);
-        ps = Current_eta(4);
+        x  = Current_X(1);
+        y  = Current_X(2);
+        z  = Current_X(3);
+        ps = Current_X(4);
 
         % Velocity
-        u = Current_eta(5);
-        v = Current_eta(6);
-        w = Current_eta(7);
-        r = Current_eta(8);
+        u = Current_X(5);
+        v = Current_X(6);
+        w = Current_X(7);
+        r = Current_X(8);
 
         % Set Error
-        Err = Desired_eta - Current_eta;
+        Err = Desired_X - Current_X;
 
         % Transformation Matrix of linear velocity
         R = [cos(ps), -sin(ps),        0;
@@ -148,13 +148,13 @@ function  [Input_trajectory, Output_trajectory] = Controller_LQR(Initial_eta, De
              -(W - B);
                     0];
              
-        input = LQR_gain * Err;
+        Tau = LQR_gain * Err;
 
         % Dynamics
-        [t,S_list] = ode45(@(t,State) Dynamics(t, Current_eta, input), [0  s_time], Current_eta);
-        Current_eta = S_list(end,(1:8)).';
-        Output_trajectory{end+1} = {Current_eta};
-        Input_trajectory{end+1}  = {Desired_eta};
+        [t,S_list] = ode45(@(t,State) Dynamics(t, Current_X, Tau), [0  s_time], Current_X);
+        Current_X = S_list(end,(1:8)).';
+        Output_trajectory{end+1} = {Current_X};
+        Input_trajectory{end+1}  = {Desired_X};
 
     end
     

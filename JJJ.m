@@ -111,16 +111,19 @@ J = [         R,  zeros(3,1);
        zeros(1,3),         T];
                        
 % Control input
-U = [u1;u2;u3;u4];
+Tau = [u1;u2;u3;u4];
 
 X = [x; y; z; ps; u; v; w; r];
-V = [u; v; w; r];
+Nu = [u; v; w; r];
 
 % Dynamics
-f = [J*V; inv(M)*(U - (C+D)*V - g)];
+f = [J*Nu; inv(M)*(Tau - (C+D)*Nu - g)];
 
 A = jacobian(f,X);
-B = jacobian(f,U)
+B = jacobian(f,Tau);
+
+disp(vec(A))
+disp(length(vec(A)))
 
 % u01 = 0;
 % u02 = 0;

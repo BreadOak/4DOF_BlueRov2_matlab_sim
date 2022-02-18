@@ -4,6 +4,12 @@ close all
 
 global Tf
 
+%%% ----- Notation ----- %%%
+%%% Eta = [x; y; z; ps]  %%%
+%%% Nu  = [u; v; w;  r]  %%%
+%%% X   = [Eta; Nu]      %%%
+%%%--------------------- %%%
+
 % Control frequency is defined as follows %
 s_freq = 100;      % Hz
 s_time = 1/s_freq; % sec
@@ -22,19 +28,19 @@ ps = 0;
 method = 3; % CubicTimeScailing
 
 % Initial & Desired value
-Initial_X = [0; 0; 0; 0; 0;  0];
-Desired_X = [x; y; z; 0; 0; ps];
+Initial_Eta = [0; 0; 0; 0; 0;  0];
+Desired_Eta = [x; y; z; 0; 0; ps];
 
 % Create desired trajectory
-Xstart = eul2rotm(Initial_X(4:6).');
-Xstart = RpToTrans(Xstart, Initial_X(1:3));
-Xend = eul2rotm(Desired_X(4:6).');
-Xend = RpToTrans(Xend, Desired_X(1:3));
-Desired_trajectory = CartesianTrajectory(Xstart, Xend, Tf, method, s_time);
+Eta_start = eul2rotm(Initial_Eta(4:6).');
+Eta_start = RpToTrans(Eta_start, Initial_Eta(1:3));
+Eta_end = eul2rotm(Desired_Eta(4:6).');
+Eta_end = RpToTrans(Eta_end, Desired_Eta(1:3));
+Desired_trajectory = CartesianTrajectory(Eta_start, Eta_end, Tf, method, s_time);
 
 % Simulation
-%[Input_trajectory, Output_trajectory] = Controller_PD(Initial_X, Desired_trajectory, s_time);
-[Input_trajectory, Output_trajectory] = Controller_LQR(Initial_X, Desired_trajectory, s_time);
+%[Input_trajectory, Output_trajectory] = Controller_PD(Initial_Eta, Desired_trajectory, s_time);
+[Input_trajectory, Output_trajectory] = Controller_LQR(Initial_Eta, Desired_trajectory, s_time);
 
 % Plot
 time = 0 : s_time : Tf - s_time;
